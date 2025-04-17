@@ -1,5 +1,6 @@
 import asyncio
 import platform
+import os
 from typing import AsyncGenerator
 
 from dotenv import load_dotenv
@@ -13,7 +14,7 @@ load_dotenv()
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5433/user_management"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:postgres@postgres:5433/user_management")
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set")

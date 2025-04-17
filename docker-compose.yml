@@ -1,16 +1,42 @@
 version: '3.8'
 
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@postgres:5433/user_management
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "poetry run python init_db.py &&
+             poetry run uvicorn app.asgi:app --host 0.0.0.0 --port 8000"
+
   postgres:
     image: postgres:16
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: user_management
+      POSTGRES_PORT: 5433
     ports:
-      - "5433:5432"
+      - "5433:5433"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -p 5433
+      -c listen_addresses='*'
+      -c max_connections=100
+      -c shared_buffers=128MB
+      -c dynamic_shared_memory_type=posix
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5433"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data: 
