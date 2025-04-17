@@ -1,61 +1,109 @@
-# User Management API
+# API управления пользователями
 
-A REST API for managing users built with LiteStar and PostgreSQL.
+REST API для управления пользователями, построенное с использованием Litestar и PostgreSQL.
 
-## Features
-
-- CRUD operations for users
-- PostgreSQL database
-- OpenAPI (Swagger) documentation
-- Docker support
-
-## Prerequisites
+## Технологии
 
 - Python 3.12
-- Poetry 1.8.3
-- Docker and Docker Compose
+- Litestar (веб-фреймворк)
+- SQLAlchemy (ORM)
+- PostgreSQL (база данных)
+- Poetry (управление зависимостями)
+- Docker & Docker Compose (контейнеризация)
 
-## Setup
+## Требования
 
-1. Clone the repository:
+- Docker
+- Docker Compose
+- Python 3.12 или выше
+- Poetry
+
+## Установка и запуск
+
+### Локальный запуск
+
+1. Клонируйте репозиторий:
 ```bash
-git clone [your-repository-url]
-cd user-management-api
+git clone <url-репозитория>
+cd <имя-директории>
 ```
 
-2. Install dependencies:
+2. Установите зависимости с помощью Poetry:
 ```bash
 poetry install
 ```
 
-3. Start the PostgreSQL database:
+3. Создайте файл `.env` в корневой директории:
+```env
+DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5433/user_management
+```
+
+4. Запустите PostgreSQL через Docker Compose:
 ```bash
-docker-compose up -d
+docker-compose up -d postgres
 ```
 
-4. Run the application:
+5. Запустите приложение:
 ```bash
-poetry run litestar run app.asgi:app --host 127.0.0.1 --port 8000
+poetry run uvicorn app.asgi:app --reload
 ```
 
-## API Documentation
+### Запуск через Docker
 
-Once the application is running, you can access the Swagger documentation at:
+1. Соберите и запустите все контейнеры:
+```bash
+docker-compose up --build
 ```
-http://127.0.0.1:8000/schema/swagger
-```
+
+Приложение будет доступно по адресу: http://localhost:8000
 
 ## API Endpoints
 
-- `GET /users` - Get all users
-- `GET /users/{user_id}` - Get a specific user
-- `POST /users` - Create a new user
-- `PUT /users/{user_id}` - Update a user
-- `DELETE /users/{user_id}` - Delete a user
+### Пользователи
 
-## Environment Variables
+- `GET /users` - Получить список всех пользователей
+- `GET /users/{id}` - Получить информацию о конкретном пользователе
+- `POST /users` - Создать нового пользователя
+- `PUT /users/{id}` - Обновить информацию о пользователе
+- `DELETE /users/{id}` - Удалить пользователя
 
-Create a `.env` file with the following variables:
+## Структура проекта
+
 ```
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5433/user_management
-``` 
+.
+├── app/
+│   ├── __init__.py
+│   ├── asgi.py          # Точка входа приложения
+│   ├── database.py      # Конфигурация базы данных
+│   ├── models.py        # Модели данных
+│   └── routes.py        # Маршруты API
+├── docker-compose.yml   # Конфигурация Docker Compose
+├── Dockerfile          # Конфигурация Docker
+├── poetry.lock         # Фиксация версий зависимостей
+├── pyproject.toml      # Конфигурация проекта и зависимости
+└── README.md           # Документация
+```
+
+## Разработка
+
+### Добавление новых зависимостей
+
+```bash
+poetry add <имя-пакета>
+```
+
+### Обновление зависимостей
+
+```bash
+poetry update
+```
+
+### Запуск тестов
+
+```bash
+poetry run pytest
+```
+
+## Лицензия
+
+MIT 
